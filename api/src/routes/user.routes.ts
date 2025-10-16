@@ -1,7 +1,8 @@
-import { Router } from "express";
+import { Router, Request } from "express";
 import prisma from "../prisma";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import authMiddleware from "../middlewares/auth.middleware";
 
 const router = Router();
 
@@ -74,6 +75,35 @@ router.post("/login", async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Ocorreu um erro ao fazer login." });
+    }
+});
+
+// Rota: GET /users/me
+router.get("/me", authMiddleware, async (req: Request, res) => {
+    try {
+        const userId = req.userId; // Pegamos o ID que o middleware adicionou
+
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            // Seleciona os campos que queremos retornar (para não incluir a senha)
+            select: {
+                id: true,
+                email: true,
+                username: true,
+                createdAt: true,
+                updatedAt: true,
+            },
+        });
+
+        if (!user) {
+            return res.status(404).json({ error: "Usuário não encontrado." });
+        }
+
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({
+            error: "Ocorreu um erro ao buscar os dados do usuário.",
+        });
     }
 });
 
