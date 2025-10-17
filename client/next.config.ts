@@ -4,12 +4,11 @@ const nextConfig: NextConfig = {
     images: {
         remotePatterns: [
             {
-                protocol: "https",
-                hostname: "exemplo.com",
+                protocol: "http",
+                hostname: "books.google.com",
             },
             {
-                // ADICIONE ESTE BLOCO
-                protocol: "http",
+                protocol: "https",
                 hostname: "books.google.com",
             },
         ],
