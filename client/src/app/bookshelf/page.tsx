@@ -78,12 +78,13 @@ export default function BookshelfPage() {
             ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
                     {bookshelf.map((entry) => (
-                        <BookCard
-                            key={entry.id}
-                            title={entry.book.title}
-                            author={entry.book.author}
-                            coverUrl={entry.book.coverUrl}
-                        />
+                        <Link key={entry.id} href={`/bookshelf/${entry.id}`}>
+                            <BookCard
+                                title={entry.book.title}
+                                author={entry.book.author}
+                                coverUrl={entry.book.coverUrl}
+                            />
+                        </Link>
                     ))}
                 </div>
             )}

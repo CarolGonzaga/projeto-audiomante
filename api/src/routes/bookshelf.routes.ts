@@ -108,4 +108,35 @@ router.patch("/:id", authMiddleware, async (req: Request, res) => {
     }
 });
 
+// Rota: GET /bookshelves/:id
+router.get("/:id", authMiddleware, async (req: Request, res) => {
+    try {
+        const userId = req.userId!;
+        const bookshelfEntryId = req.params.id;
+
+        const entry = await prisma.bookshelf.findFirst({
+            where: {
+                id: bookshelfEntryId,
+                userId: userId, // Garante que o usuário só pode ver seus próprios itens
+            },
+            include: {
+                book: true, // Inclui os detalhes do livro
+            },
+        });
+
+        if (!entry) {
+            return res
+                .status(404)
+                .json({ error: "Entrada da estante não encontrada." });
+        }
+
+        res.status(200).json(entry);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            error: "Ocorreu um erro ao buscar o item da estante.",
+        });
+    }
+});
+
 export default router;
