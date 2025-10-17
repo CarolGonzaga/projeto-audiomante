@@ -109,7 +109,7 @@ export default function SearchPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#2A233C] p-8 text-white">
+        <div>
             {/* ... (seu formulário de busca) ... */}
             <h1 className="text-4xl font-bold text-[#F3D1D7] mb-8">Buscar Livros</h1>
             <form onSubmit={handleSearch} className="mb-8 flex gap-2">

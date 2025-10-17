@@ -106,7 +106,7 @@ export default function BookDetailPage() {
     }
 
     return (
-        <div className="p-8 text-white">
+        <div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="md:col-span-1">
                     {entry.book.coverUrl && (
