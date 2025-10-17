@@ -1,7 +1,7 @@
 // client/src/app/bookshelf/[id]/page.tsx
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, FormEvent } from 'react';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
