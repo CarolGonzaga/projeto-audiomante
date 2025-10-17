@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import userRoutes from "./routes/user.routes";
 import bookshelfRoutes from "./routes/bookshelf.routes";
+import searchRoutes from "./routes/search.routes";
 
 dotenv.config();
 
@@ -17,6 +18,8 @@ app.use("/users", userRoutes);
 
 // Rotas de Estante de Livros
 app.use("/bookshelves", bookshelfRoutes);
+
+app.use("/search", searchRoutes);
 
 // Rota de teste
 app.get("/", (req, res) => {

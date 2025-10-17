@@ -1,10 +1,11 @@
-// client/src/app/bookshelf/page.tsx
 "use client";
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import axios from 'axios';
+
 import BookCard from '@/components/BookCard';
 
 // Definimos os tipos para os dados que virão da API
@@ -65,7 +66,12 @@ export default function BookshelfPage() {
 
     return (
         <main className="min-h-screen bg-[#2A233C] p-8 text-white">
-            <h1 className="text-4xl font-bold text-[#F3D1D7] mb-8">Minha Estante</h1>
+            <div className="flex justify-between items-center mb-8">
+                <h1 className="text-4xl font-bold text-[#F3D1D7]">Minha Estante</h1>
+                <Link href="/search" className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded-md font-bold">
+                    + Adicionar Livro
+                </Link>
+            </div>
 
             {bookshelf.length === 0 ? (
                 <p className="text-gray-400">Sua estante está vazia. Adicione alguns livros!</p>
