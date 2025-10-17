@@ -139,4 +139,32 @@ router.get("/:id", authMiddleware, async (req: Request, res) => {
     }
 });
 
+// Rota: DELETE /bookshelves/:id
+router.delete("/:id", authMiddleware, async (req: Request, res) => {
+    try {
+        const userId = req.userId!;
+        const bookshelfEntryId = req.params.id;
+
+        const deleteResult = await prisma.bookshelf.deleteMany({
+            where: {
+                id: bookshelfEntryId,
+                userId: userId, // Garante que o usuário só pode deletar seus próprios itens
+            },
+        });
+
+        if (deleteResult.count === 0) {
+            return res.status(404).json({
+                error: "Entrada da estante não encontrada ou não pertence ao usuário.",
+            });
+        }
+
+        res.status(204).send(); // 204 No Content é a resposta padrão para um delete bem-sucedido
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            error: "Ocorreu um erro ao remover o livro da estante.",
+        });
+    }
+});
+
 export default router;
