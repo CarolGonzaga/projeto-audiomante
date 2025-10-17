@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
-import userRoutes from "./routes/user.routes"; // Importe as rotas de usuário
+import userRoutes from "./routes/user.routes";
+import bookshelfRoutes from "./routes/bookshelf.routes";
 
 dotenv.config();
 
@@ -9,8 +10,11 @@ const port = process.env.PORT || 3001;
 
 app.use(express.json());
 
-// Use as rotas de usuário com o prefixo /users
+// Rotas de Usuário
 app.use("/users", userRoutes);
+
+// Rotas de Estante de Livros
+app.use("/bookshelves", bookshelfRoutes);
 
 // Rota de teste
 app.get("/", (req, res) => {
