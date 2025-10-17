@@ -1,46 +1,62 @@
-"use client"; // Indica que este é um Componente de Cliente
+"use client";
 
 import { createContext, useState, useEffect, ReactNode } from 'react';
 import axios from 'axios';
 
-// Define a interface para os dados do usuário
 interface User {
     id: string;
     email: string;
     username: string;
 }
 
-// Define a interface para o valor do contexto
 interface AuthContextType {
     isAuthenticated: boolean;
     user: User | null;
-    login: (token: string) => void;
+    loading: boolean; // Adicionamos um estado de carregamento
+    login: (token: string) => Promise<void>; // Login agora será assíncrono
     logout: () => void;
 }
 
-// Cria o contexto com um valor padrão
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Cria o componente Provedor
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [loading, setLoading] = useState(true); // Começa como true
 
     useEffect(() => {
-        const token = localStorage.getItem('authToken');
-        if (token) {
-            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-            // Aqui, você poderia buscar os dados do usuário com a rota /me
-            // para validar o token no carregamento da página.
-            // Por simplicidade, vamos deixar para depois.
-        }
+        const validateToken = async () => {
+            const token = localStorage.getItem('authToken');
+            if (token) {
+                axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+                try {
+                    // Valida o token e busca os dados do usuário
+                    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/me`);
+                    setUser(response.data);
+                    setIsAuthenticated(true);
+                } catch (error) {
+                    // Se o token for inválido, limpa tudo
+                    localStorage.removeItem('authToken');
+                    setIsAuthenticated(false);
+                    setUser(null);
+                }
+            }
+            setLoading(false); // Finaliza o carregamento
+        };
+
+        validateToken();
     }, []);
 
-    const login = (token: string) => {
+    const login = async (token: string) => {
         localStorage.setItem('authToken', token);
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        setIsAuthenticated(true);
-        // Após o login, você buscaria os dados do usuário com a rota /me e os salvaria com setUser()
+        try {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/me`);
+            setUser(response.data);
+            setIsAuthenticated(true);
+        } catch (error) {
+            logout(); // Se falhar ao buscar o usuário, desloga
+        }
     };
 
     const logout = () => {
@@ -51,7 +67,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+        <AuthContext.Provider value={{ isAuthenticated, user, loading, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

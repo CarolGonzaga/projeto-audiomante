@@ -4,7 +4,15 @@ import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 
 export default function HomePage() {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center bg-[#2A233C] text-white">
+        <p>Carregando...</p>
+      </main>
+    );
+  }
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-[#2A233C] text-white">
