@@ -6,14 +6,12 @@ import authMiddleware from "../middlewares/auth.middleware";
 const router = Router();
 
 // Rota: POST /bookshelves
-// Adiciona um livro a uma estante para o usuário logado
 router.post("/", authMiddleware, async (req: Request, res) => {
     try {
         const userId = req.userId!;
         const { googleId, title, author, coverUrl, description, status } =
             req.body;
 
-        // Validação básica dos dados do livro
         if (!googleId || !title || !author || !status) {
             return res
                 .status(400)
@@ -32,7 +30,6 @@ router.post("/", authMiddleware, async (req: Request, res) => {
             },
         });
 
-        // Agora que temos o livro (existente ou novo), criamos a entrada na estante
         const newBookshelfEntry = await prisma.bookshelf.create({
             data: {
                 status,
@@ -43,7 +40,6 @@ router.post("/", authMiddleware, async (req: Request, res) => {
 
         res.status(201).json(newBookshelfEntry);
     } catch (error: any) {
-        // Trata o erro caso o usuário tente adicionar o mesmo livro duas vezes
         if (error.code === "P2002") {
             return res
                 .status(409)
@@ -52,6 +48,62 @@ router.post("/", authMiddleware, async (req: Request, res) => {
         console.error(error);
         res.status(500).json({
             error: "Ocorreu um erro ao adicionar o livro à estante.",
+        });
+    }
+});
+
+// Rota: GET /bookshelves
+router.get("/", authMiddleware, async (req: Request, res) => {
+    try {
+        const userId = req.userId!;
+
+        const bookshelf = await prisma.bookshelf.findMany({
+            where: { userId },
+            include: {
+                book: true,
+            },
+            orderBy: {
+                updatedAt: "desc",
+            },
+        });
+
+        res.status(200).json(bookshelf);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Ocorreu um erro ao buscar a estante." });
+    }
+});
+
+// Rota: PATCH /bookshelves/:id
+router.patch("/:id", authMiddleware, async (req: Request, res) => {
+    try {
+        const userId = req.userId!;
+        const bookshelfEntryId = req.params.id;
+        const { status, rating, review } = req.body;
+
+        const updatedEntry = await prisma.bookshelf.updateMany({
+            where: {
+                id: bookshelfEntryId,
+                userId: userId,
+            },
+            data: {
+                status,
+                rating,
+                review,
+            },
+        });
+
+        if (updatedEntry.count === 0) {
+            return res.status(404).json({
+                error: "Entrada da estante não encontrada ou não pertence ao usuário.",
+            });
+        }
+
+        res.status(200).json({ message: "Estante atualizada com sucesso." });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            error: "Ocorreu um erro ao atualizar a estante.",
         });
     }
 });
