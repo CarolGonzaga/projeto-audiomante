@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import BookCard from '@/components/BookCard';
 
 // Definimos os tipos para os dados que virão da API
 interface Book {
@@ -69,13 +70,14 @@ export default function BookshelfPage() {
             {bookshelf.length === 0 ? (
                 <p className="text-gray-400">Sua estante está vazia. Adicione alguns livros!</p>
             ) : (
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-                    {/* Aqui vamos mapear e mostrar os livros */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
                     {bookshelf.map((entry) => (
-                        <div key={entry.id} className="bg-[#433A5E] p-4 rounded-lg">
-                            <p className="font-bold">{entry.book.title}</p>
-                            <p className="text-sm text-gray-300">{entry.book.author}</p>
-                        </div>
+                        <BookCard
+                            key={entry.id}
+                            title={entry.book.title}
+                            author={entry.book.author}
+                            coverUrl={entry.book.coverUrl}
+                        />
                     ))}
                 </div>
             )}
