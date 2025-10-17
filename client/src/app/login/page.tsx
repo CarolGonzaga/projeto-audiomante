@@ -39,6 +39,16 @@ export default function LoginPage() {
                     <h1 className="text-4xl font-bold text-[#F3D1D7]">Audiomante</h1>
                     <p className="text-gray-300 mt-2">Sua estante de livros sáficos.</p>
                 </div>
+
+                <a
+                    href="http://localhost:3001/auth/google"
+                    className="w-full py-2 px-4 border border-gray-500 text-white font-bold rounded-md transition duration-300 flex items-center justify-center gap-2 hover:bg-gray-700"
+                >
+                    Entrar com o Google
+                </a>
+
+                <div className="my-4 text-center text-gray-400">ou</div>
+                
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
                         <label className="text-sm font-bold text-gray-300 block">Email</label>
