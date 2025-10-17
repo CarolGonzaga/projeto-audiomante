@@ -15,7 +15,7 @@ export default function HomePage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-[#2A233C] text-white">
+    <div className="flex min-h-screen flex-col items-center justify-center p-24 bg-[#2A233C] text-white">
       <div className="text-center">
         <h1 className="text-5xl font-bold text-[#F3D1D7] mb-4">
           Bem-vinda ao Audiomante!
@@ -55,6 +55,6 @@ export default function HomePage() {
           </div>
         )}
       </div>
-    </main>
+    </div>
   );
 }

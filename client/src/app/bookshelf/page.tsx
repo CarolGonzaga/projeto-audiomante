@@ -65,7 +65,7 @@ export default function BookshelfPage() {
     }
 
     return (
-        <main className="min-h-screen bg-[#2A233C] p-8 text-white">
+        <div className="min-h-screen bg-[#2A233C] p-8 text-white">
             <div className="flex justify-between items-center mb-8">
                 <h1 className="text-4xl font-bold text-[#F3D1D7]">Minha Estante</h1>
                 <Link href="/search" className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded-md font-bold">
@@ -87,6 +87,6 @@ export default function BookshelfPage() {
                     ))}
                 </div>
             )}
-        </main>
+        </div>
     );
 }
