@@ -26,6 +26,14 @@ export default function HomePage() {
             <p className="text-lg text-gray-300">
               Sua estante está pronta. Comece a adicionar seus livros!
             </p>
+
+            <Link
+              href="/bookshelf"
+              className="px-6 py-2 bg-[#E85972] hover:bg-[#d94862] text-white font-bold rounded-md transition duration-300 mr-4"
+            >
+              Ver Minha Estante
+            </Link>
+
             <button
               onClick={logout}
               className="px-6 py-2 bg-red-500 hover:bg-red-600 text-white font-bold rounded-md transition duration-300"
