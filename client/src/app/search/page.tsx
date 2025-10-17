@@ -1,14 +1,17 @@
 "use client";
 
-import { useState, FormEvent } from 'react';
-import axios from 'axios';
+import { useState, FormEvent, useEffect } from 'react';
+import axios, { isAxiosError } from 'axios';
 import BookCard from '@/components/BookCard';
+import { useAuth } from '@/hooks/useAuth';
+import { useRouter } from 'next/navigation';
 
 interface GoogleBookItem {
     id: string;
     volumeInfo: {
         title: string;
         authors?: string[];
+        description?: string;
         imageLinks?: {
             thumbnail?: string;
         };
@@ -20,13 +23,26 @@ interface BookSearchResult {
     title: string;
     author: string;
     coverUrl: string | null;
+    description: string | null;
 }
 
 export default function SearchPage() {
+    const { isAuthenticated, loading: authLoading } = useAuth();
+    const router = useRouter();
+
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<BookSearchResult[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    const [addingBooks, setAddingBooks] = useState<Set<string>>(new Set());
+    const [addedBooks, setAddedBooks] = useState<Set<string>>(new Set());
+
+    useEffect(() => {
+        if (!authLoading && !isAuthenticated) {
+            router.push('/login');
+        }
+    }, [isAuthenticated, authLoading, router]);
 
     const handleSearch = async (event: FormEvent) => {
         event.preventDefault();
@@ -40,16 +56,16 @@ export default function SearchPage() {
             );
 
             if (response.data.items) {
-                // 2. USAMOS A NOVA INTERFACE NO .map()
                 const books = response.data.items.map((item: GoogleBookItem) => ({
                     googleId: item.id,
                     title: item.volumeInfo.title,
                     author: item.volumeInfo.authors ? item.volumeInfo.authors.join(', ') : 'Autor desconhecido',
                     coverUrl: item.volumeInfo.imageLinks?.thumbnail || null,
+                    description: item.volumeInfo.description || null,
                 }));
                 setResults(books);
             } else {
-                setResults([]); // Limpa os resultados se a busca não retornar nada
+                setResults([]);
             }
 
         } catch (err) {
@@ -59,9 +75,42 @@ export default function SearchPage() {
         }
     };
 
-    // ... (o resto do seu código JSX permanece o mesmo)
+    const handleAddBook = async (book: BookSearchResult) => {
+        setAddingBooks(prev => new Set(prev).add(book.googleId));
+        try {
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/bookshelves`, {
+                ...book,
+                status: 'QUERO_LER', // Adiciona com um status padrão
+            });
+            setAddedBooks(prev => new Set(prev).add(book.googleId));
+        } catch (error) {
+            // CORREÇÃO AQUI
+            let errorMessage = "Erro ao adicionar o livro."; // Mensagem padrão
+            if (isAxiosError(error) && error.response?.data?.error) {
+                // Se for um erro do Axios com uma mensagem da nossa API, use-a
+                errorMessage = error.response.data.error;
+            }
+            alert(errorMessage);
+        } finally {
+            setAddingBooks(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(book.googleId);
+                return newSet;
+            });
+        }
+    };
+
+    if (authLoading) {
+        return (
+            <main className="flex min-h-screen items-center justify-center bg-[#2A233C] text-white">
+                <p>Carregando...</p>
+            </main>
+        );
+    }
+
     return (
         <main className="min-h-screen bg-[#2A233C] p-8 text-white">
+            {/* ... (seu formulário de busca) ... */}
             <h1 className="text-4xl font-bold text-[#F3D1D7] mb-8">Buscar Livros</h1>
             <form onSubmit={handleSearch} className="mb-8 flex gap-2">
                 <input
@@ -86,6 +135,10 @@ export default function SearchPage() {
                         title={book.title}
                         author={book.author}
                         coverUrl={book.coverUrl}
+                        // Passando a função e os estados para o card
+                        onAdd={() => handleAddBook(book)}
+                        isAdding={addingBooks.has(book.googleId)}
+                        isAdded={addedBooks.has(book.googleId)}
                     />
                 ))}
             </div>
