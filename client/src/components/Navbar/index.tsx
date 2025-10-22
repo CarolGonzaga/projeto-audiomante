@@ -1,4 +1,3 @@
-// client/src/components/Navbar/index.tsx
 "use client";
 
 import Link from 'next/link';

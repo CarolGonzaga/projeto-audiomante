@@ -12,8 +12,8 @@ interface User {
 interface AuthContextType {
     isAuthenticated: boolean;
     user: User | null;
-    loading: boolean; // Adicionamos um estado de carregamento
-    login: (token: string) => Promise<void>; // Login agora será assíncrono
+    loading: boolean;
+    login: (token: string) => Promise<void>;
     logout: () => void;
 }
 
