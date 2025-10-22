@@ -2,6 +2,7 @@
 
 import { createContext, useState, useEffect, ReactNode } from 'react';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 interface User {
     id: string;
@@ -22,7 +23,8 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [loading, setLoading] = useState(true); // Começa como true
+    const [loading, setLoading] = useState(true);
+    const router = useRouter();
 
     useEffect(() => {
         const validateToken = async () => {
@@ -64,6 +66,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         delete axios.defaults.headers.common['Authorization'];
         setUser(null);
         setIsAuthenticated(false);
+        router.push('/login');
     };
 
     return (
