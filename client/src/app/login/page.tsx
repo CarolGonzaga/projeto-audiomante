@@ -121,15 +121,31 @@ export default function AuthPage() {
                     </p>
                 </div>
 
-                {/* ===== A MÁGICA DA CURVA (DESKTOP) ===== */}
-                {/* Pseudo-elemento ::after para criar a curva para dentro */}
-                <div className="hidden md:block absolute top-0 bottom-0 -right-20 w-40 bg-[#fffaf7] rounded-l-[100%] z-20" />
-                {/* Ajuste -right-20 e w-40 para controlar a curva */}
+                {/* ===== CURVA S INLINE (substitui imagens anteriores) ===== */}
+                <div
+                    aria-hidden="true"
+                    className="absolute top-0 right-0 h-full w-[180px] md:w-[240px] lg:w-[300px] z-30 pointer-events-none"
+                >
+                    {/* inline SVG para controlar fill/direção sem problemas de currentColor */}
+                    <svg
+                        viewBox="0 0 400 800"
+                        xmlns="http://www.w3.org/2000/svg"
+                        preserveAspectRatio="none"
+                        className="h-full w-full block"
+                    >
+                        <path
+                            d="M400,0 L200,0 C150,0 110,60 130,140 C150,220 220,260 240,340 C260,420 220,480 180,560 C140,640 180,720 240,800 L400,800 Z"
+                            fill="#fffaf7"
+                        />
+                    </svg>
+                </div>
+                {/* mobile curve */}
+                <div className="block md:hidden absolute left-0 right-0 -bottom-16 h-[120px] z-30 pointer-events-none">
+                    <svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="h-full w-full">
+                        <path d="M0,120 C80,0 320,0 400,120 L400,0 L0,0 Z" fill="#fffaf7" />
+                    </svg>
+                </div>
 
-                {/* ===== A MÁGICA DA CURVA (MOBILE) ===== */}
-                {/* Pseudo-elemento ::after para criar a curva para baixo */}
-                <div className="block md:hidden absolute left-0 right-0 -bottom-16 h-32 bg-[#fffaf7] rounded-t-[100%] z-20" />
-                {/* Ajuste -bottom-16 e h-32 para controlar a curva */}
             </div>
 
             {/* Coluna Direita (Formulário) */}
