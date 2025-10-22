@@ -40,8 +40,8 @@ export default function AuthPage() {
         try {
             const endpoint =
                 tab === "login"
-                    ? `${process.env.NEXT_PUBLIC_API_URL}/auth/login`
-                    : `${process.env.NEXT_PUBLIC_API_URL}/auth/register`;
+                    ? `${process.env.NEXT_PUBLIC_API_URL}/users/login`
+                    : `${process.env.NEXT_PUBLIC_API_URL}/users/signup`;
 
             const response = await axios.post(endpoint, formData);
             const token = response.data?.token;
@@ -138,7 +138,7 @@ export default function AuthPage() {
                                 value={formData.name}
                                 onChange={handleChange}
                                 required
-                                className="w-full px-4 py-2 rounded-lg border border-[#c8b6d9]/50 focus:outline-none focus:ring-2 focus:ring-[#4d3859]/50 bg-white/70"
+                                className="w-full px-4 py-2 rounded-lg border border-[#c8b6d9]/50 focus:outline-none focus:ring-2 focus:ring-[#4d3859]/50 bg-white/70 text-[#4d3859]"
                             />
                         </div>
                     )}
@@ -153,7 +153,7 @@ export default function AuthPage() {
                             value={formData.email}
                             onChange={handleChange}
                             required
-                            className="w-full px-4 py-2 rounded-lg border border-[#c8b6d9]/50 focus:outline-none focus:ring-2 focus:ring-[#4d3859]/50 bg-white/70"
+                            className="w-full px-4 py-2 rounded-lg border border-[#c8b6d9]/50 focus:outline-none focus:ring-2 focus:ring-[#4d3859]/50 bg-white/70 text-[#4d3859]"
                         />
                     </div>
 
@@ -165,7 +165,7 @@ export default function AuthPage() {
                             value={formData.password}
                             onChange={handleChange}
                             required
-                            className="w-full px-4 py-2 pr-10 rounded-lg border border-[#c8b6d9]/50 focus:outline-none focus:ring-2 focus:ring-[#4d3859]/50 bg-white/70"
+                            className="w-full px-4 py-2 pr-10 rounded-lg border border-[#c8b6d9]/50 focus:outline-none focus:ring-2 focus:ring-[#4d3859]/50 bg-white/70 text-[#4d3859]"
                         />
                         <button
                             type="button"

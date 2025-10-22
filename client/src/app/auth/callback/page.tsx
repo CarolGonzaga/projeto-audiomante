@@ -12,10 +12,10 @@ export default function AuthCallbackPage() {
     useEffect(() => {
         const token = searchParams.get('token');
         if (token) {
-            login(token); // Salva o token usando nosso AuthContext
-            router.push('/'); // Redireciona para a home
+            login(token);
+            router.push('/bookshelf');
         } else {
-            router.push('/login?error=auth_failed'); // Se falhar, volta para o login
+            router.push('/login?error=auth_failed');
         }
     }, [searchParams, router, login]);
 
