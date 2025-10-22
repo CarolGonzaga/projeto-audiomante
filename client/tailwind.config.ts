@@ -12,6 +12,9 @@ const config: Config = {
                 sans: ["var(--font-inter)"],
                 display: ["var(--font-cinzel)"],
             },
+            fontSize: {
+                xxs: ["0.2rem", "0.75rem"],
+            },
         },
     },
     plugins: [],
