@@ -1,4 +1,3 @@
-// /client/src/app/login/page.tsx
 "use client";
 
 import { useState, useEffect, FormEvent } from "react";
@@ -93,7 +92,7 @@ export default function AuthPage() {
         <div className="min-h-screen flex flex-col md:flex-row bg-[#fffaf7]">
 
             {/* Coluna Esquerda (Tema Audiomante) */}
-            <div className="relative w-full h-[30vh] md:h-screen md:w-1/2 bg-[#4d3859] p-10 flex flex-col justify-center items-center text-white text-center overflow-hidden">
+            <div className="relative w-full h-[50vh] md:h-screen md:w-2/3 bg-[#4d3859] p-10 flex flex-col justify-center items-center text-white text-center overflow-hidden">
                 {/* Imagem de fundo com overlay */}
                 <div className="absolute inset-0 z-0">
                     <Image
@@ -108,25 +107,25 @@ export default function AuthPage() {
 
                 {/* Conteúdo da coluna esquerda */}
                 <div className="relative z-10">
+                    <h1 className="text-2xl font-bold mb-8 font-display">Boas vindas ao Audiomante</h1>
                     <Image
                         src="/Audiomante (2).png" // Ou audiomante.png se preferir
                         alt="Audiomante Logo"
                         width={150}
                         height={150}
-                        className="mx-auto mb-6"
+                        className="mx-auto mb-20"
                     />
-                    <h1 className="text-3xl font-bold mb-4 font-display">Bem-vinda ao Audiomante</h1>
-                    <p className="text-lg text-gray-300 w-100">
+                    <p className="text-sm text-gray-300 w-100">
                         Sua estante virtual de livros. Mergulhe em histórias, organize suas leituras e compartilhe suas paixões.
                     </p>
                 </div>
 
-                {/* ===== CURVA S INLINE (substitui imagens anteriores) ===== */}
+                {/* ===== CURVA ESTILO "WAVE" (desktop) ===== */}
                 <div
                     aria-hidden="true"
-                    className="absolute top-0 right-0 h-full w-[180px] md:w-[240px] lg:w-[300px] z-30 pointer-events-none"
+                    // Aparece SÓ em desktop
+                    className="hidden md:block absolute top-0 right-0 h-full w-[200px] md:w-[260px] lg:w-[320px] z-30 pointer-events-none"
                 >
-                    {/* inline SVG para controlar fill/direção sem problemas de currentColor */}
                     <svg
                         viewBox="0 0 400 800"
                         xmlns="http://www.w3.org/2000/svg"
@@ -134,15 +133,29 @@ export default function AuthPage() {
                         className="h-full w-full block"
                     >
                         <path
-                            d="M400,0 L200,0 C150,0 110,60 130,140 C150,220 220,260 240,340 C260,420 220,480 180,560 C140,640 180,720 240,800 L400,800 Z"
+                            d="M400,0
+                            C320,300 -200,420 200,800 
+                            L400,800 L400,0 Z"
                             fill="#fffaf7"
                         />
                     </svg>
                 </div>
-                {/* mobile curve */}
-                <div className="block md:hidden absolute left-0 right-0 -bottom-16 h-[120px] z-30 pointer-events-none">
-                    <svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="h-full w-full">
-                        <path d="M0,120 C80,0 320,0 400,120 L400,0 L0,0 Z" fill="#fffaf7" />
+
+                {/* Curva inferior estilo "wave" para mobile */}
+                <div
+                    aria-hidden="true"
+                    className="block md:hidden absolute bottom-0 left-0 w-full z-20 pointer-events-none"
+                >
+                    <svg
+                        viewBox="0 0 1440 320"
+                        xmlns="http://www.w3.org/2000/svg"
+                        preserveAspectRatio="none"
+                        className="w-full h-[140px]"
+                    >
+                        <path
+                            fill="#fffaf7"
+                            d="M0,96 C480,256 960,64 1440,192 L1440,320 L0,320 Z"
+                        />
                     </svg>
                 </div>
 
