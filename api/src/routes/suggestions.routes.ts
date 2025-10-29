@@ -5,18 +5,18 @@ const router = Router();
 
 // Lista fixa de Google Books IDs para sugestões
 const suggestionBookIds = [
-    "q71zEAAAQBAJ", // Sorte no Amor
-    "-omanQEACAAJ", // A Breve Vida das Flores (Substituto)
-    "M_TZEAAAQBAJ", // Murdle 1
-    "KjnNEAAAQBAJ", // Férias de Matar
-    "j17iEAAAQBAJ", // Casas Estranhas
-    "96TNEAAAQBAJ", // O Manifesto do Cuidado (Substituto)
-    "vM3AEAAAQBAJ", // Como Não Se Apaixonar
-    "oFhNEAAAQBAJ", // A Noite Passada no Telegraph Club
-    "Prc0AgAAQBAJ", // Dias Perfeitos
-    "QzEtDwAAQBAJ", // Na Ponta dos Dedos
-    "o7aZDwAAQBAJ", // É Assim Que Se Perde a Guerra do Tempo
-    "2x0xEAAAQBAJ", // O Amor Não É Óbvio
+    "q71zEAAAQBAJ", // 1. Sorte no Amor - Lynn Painter
+    "fDxUEQAAQBAJ", // 2. Querida Tia - Valérie Perrin
+    "M_TZEAAAQBAJ", // 3. Murdle 1 - G. T. Karber
+    "KjnNEAAAQBAJ", // 4. Férias de Matar - Tessa Bailey
+    "j17iEAAAQBAJ", // 5. Casas Estranhas - Uketsu
+    "0cTYEAAAQBAJ", // 6. Delilah Green Não Quer Saber - Ashley Herring Blake
+    "vM3AEAAAQBAJ", // 7. Como Não Se Apaixonar - D. Barreto
+    "oFhNEAAAQBAJ", // 8. A Noite Passada no Telegraph Club - Malinda Lo
+    "Prc0AgAAQBAJ", // 9. Dias Perfeitos - Raphael Montes
+    "QzEtDwAAQBAJ", // 10. Na Ponta dos Dedos - Sarah Waters
+    "o7aZDwAAQBAJ", // 11. É Assim Que Se Perde a Guerra do Tempo - Max Gladstone & Amal El-Mohtar
+    "2x0xEAAAQBAJ", // 12. O Amor Não É Óbvio - Elayne Baeta
 ];
 
 interface GoogleApiBook {
@@ -43,7 +43,6 @@ const fetchBookById = async (googleId: string): Promise<any | null> => {
     }
 };
 
-
 router.get("/", async (req: Request, res) => {
     try {
         // Busca os detalhes de todos os livros da lista em paralelo
@@ -56,14 +55,15 @@ router.get("/", async (req: Request, res) => {
             .map((item) => ({
                 googleId: item.id,
                 title: item.volumeInfo.title,
-                author: item.volumeInfo.authors ? item.volumeInfo.authors.join(", ") : "Autor desconhecido",
+                author: item.volumeInfo.authors
+                    ? item.volumeInfo.authors.join(", ")
+                    : "Autor desconhecido",
                 coverUrl: item.volumeInfo.imageLinks?.thumbnail || null,
                 description: item.volumeInfo.description || null,
                 pageCount: item.volumeInfo.pageCount || null,
             }));
 
         res.status(200).json(formattedBooks);
-
     } catch (error) {
         console.error("Erro ao buscar sugestões de livros:", error);
         res.status(500).json({ error: "Erro ao buscar sugestões." });
