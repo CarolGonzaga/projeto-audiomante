@@ -3,20 +3,19 @@ import axios from "axios";
 
 const router = Router();
 
-// Lista fixa de Google Books IDs para sugestões
 const suggestionBookIds = [
-    "q71zEAAAQBAJ", // 1. Sorte no Amor - Lynn Painter
+    "cQxIEQAAQBAJ", // 1. Sorte no Amor - Lynn Painter
     "fDxUEQAAQBAJ", // 2. Querida Tia - Valérie Perrin
-    "M_TZEAAAQBAJ", // 3. Murdle 1 - G. T. Karber
-    "KjnNEAAAQBAJ", // 4. Férias de Matar - Tessa Bailey
-    "j17iEAAAQBAJ", // 5. Casas Estranhas - Uketsu
-    "0cTYEAAAQBAJ", // 6. Delilah Green Não Quer Saber - Ashley Herring Blake
-    "vM3AEAAAQBAJ", // 7. Como Não Se Apaixonar - D. Barreto
-    "oFhNEAAAQBAJ", // 8. A Noite Passada no Telegraph Club - Malinda Lo
-    "Prc0AgAAQBAJ", // 9. Dias Perfeitos - Raphael Montes
-    "QzEtDwAAQBAJ", // 10. Na Ponta dos Dedos - Sarah Waters
-    "o7aZDwAAQBAJ", // 11. É Assim Que Se Perde a Guerra do Tempo - Max Gladstone & Amal El-Mohtar
-    "2x0xEAAAQBAJ", // 12. O Amor Não É Óbvio - Elayne Baeta
+    "TJOFEAAAQBAJ", // 3. Murdle: Caderno de Casos Confidenciais, Vol. 2 - G. T. Karber
+    "XjxUEQAAQBAJ", // 4. Férias de Matar - Tessa Bailey
+    "J99MEQAAQBAJ", // 5. Casas Estranhas - Uketsu
+    "MXCAEAAAQBAJ", // 6. Delilah Green não está nem aí - Ashley Herring Blake
+    "dGSOEAAAQBAJ", // 7. A Noite Passada no Telegraph Club - Malinda Lo
+    "BiaoBAAAQBAJ", // 8. Dias Perfeitos - Raphael Montes
+    "pFu9EAAAQBAJ", // 9. A Empregada - Freida McFadden
+    "F0BIEAAAQBAJ", // 10. O Primeiro Beijo de Romeu - Felipe B. D'Elia
+    "p84OEAAAQBAJ", // 11. É Assim Que Se Perde a Guerra do Tempo - Max Gladstone & Amal El-Mohtar
+    "3qI8EQAAQBAJ", // 12. O Amor Não É Óbvio: Edição Especial - Elayne Baeta
 ];
 
 interface GoogleApiBook {
@@ -29,8 +28,6 @@ interface GoogleApiBook {
         pageCount?: number;
     };
 }
-
-// Função auxiliar para buscar detalhes de um livro pelo ID
 const fetchBookById = async (googleId: string): Promise<any | null> => {
     try {
         const response = await axios.get(
@@ -38,20 +35,19 @@ const fetchBookById = async (googleId: string): Promise<any | null> => {
         );
         return response.data;
     } catch (error) {
-        console.error(`Erro ao buscar livro com ID ${googleId}:`, error);
-        return null; // Retorna null se falhar
+        console.error(`Erro ao buscar livro com ID ${googleId}:`, error); // Mantém o log de erro caso algum ID falhe no futuro
+        return null;
     }
 };
 
 router.get("/", async (req: Request, res) => {
     try {
-        // Busca os detalhes de todos os livros da lista em paralelo
         const bookPromises = suggestionBookIds.map(fetchBookById);
         const bookResults = await Promise.all(bookPromises);
 
-        // Filtra resultados nulos e formata os dados
+        // Filtra resultados nulos (caso algum ID falhe) e formata
         const formattedBooks = bookResults
-            .filter((item): item is GoogleApiBook => item !== null) // Garante que item não é nulo e tipa corretamente
+            .filter((item): item is GoogleApiBook => item !== null)
             .map((item) => ({
                 googleId: item.id,
                 title: item.volumeInfo.title,
