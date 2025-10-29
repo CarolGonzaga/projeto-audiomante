@@ -8,7 +8,6 @@ import { useAuth } from '@/hooks/useAuth';
 import axios from 'axios';
 import Image from 'next/image';
 
-// (Você pode mover estas interfaces para um arquivo compartilhado depois)
 interface Book {
     title: string;
     author: string;

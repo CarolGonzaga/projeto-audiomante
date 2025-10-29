@@ -1,4 +1,3 @@
-// /api/src/routes/search.routes.ts
 import { Router, Request } from "express";
 import axios from "axios";
 

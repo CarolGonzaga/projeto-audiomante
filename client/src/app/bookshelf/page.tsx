@@ -13,6 +13,7 @@ interface Book {
     title: string;
     author: string;
     coverUrl: string | null;
+    pageCount?: number;
 }
 
 interface BookshelfEntry {
@@ -105,12 +106,21 @@ export default function BookshelfPage() {
 
     const summaryData = useMemo(() => {
         const counts = { LIDO: 0, LENDO: 0, QUERO_LER: 0 };
+        let totalPaginasLidas = 0;
+
         bookshelf.forEach(entry => {
             if (counts[entry.status as keyof typeof counts] !== undefined) {
                 counts[entry.status as keyof typeof counts]++;
             }
+
+            // soma páginas de livros marcados como LIDO
+            if (entry.status === "LIDO") {
+                const paginas = entry.book?.pageCount ?? 0;
+                totalPaginasLidas += paginas;
+            }
         });
-        return counts;
+
+        return { ...counts, PAGINOMETRO: totalPaginasLidas };
     }, [bookshelf]);
 
     if (authLoading || (loadingBooks && bookshelf.length === 0)) {
@@ -122,19 +132,34 @@ export default function BookshelfPage() {
     }
 
     return (
-        // Container da PÁGINA: Força altura total (h-full) do espaço disponível no <main>
         <div className="flex flex-col flex-grow bg-[#e1d9d0] text-[#1E192B] overflow-hidden h-full">
 
-            {/* Container do CONTEÚDO PRINCIPAL: Mantém flex-grow */}
+            {/* Container do CONTEÚDO PRINCIPAL */}
             <div className="container mx-auto p-4 md:p-6 flex-grow overflow-auto">
 
                 {/* Seção de Sumário */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8 md:mb-12">
                     {/* ... Cards ... */}
-                    <SummaryCard title="Paginômetro" value={"?"} unit="páginas" />
-                    <SummaryCard title="Lido" value={summaryData.LIDO} unit="livros" />
-                    <SummaryCard title="Lendo" value={summaryData.LENDO} unit={summaryData.LENDO === 1 ? "livro" : "livros"} />
-                    <SummaryCard title="Quero Ler" value={summaryData.QUERO_LER} unit="livros" />
+                    <SummaryCard
+                        title="Paginômetro"
+                        value={summaryData.PAGINOMETRO.toLocaleString("pt-BR")}
+                        unit={summaryData.PAGINOMETRO === 1 ? "página" : "páginas"}
+                    />
+                    <SummaryCard
+                        title="Lido"
+                        value={summaryData.LIDO}
+                        unit={summaryData.LENDO === 1 ? "livro" : "livros"}
+                    />
+                    <SummaryCard
+                        title="Lendo"
+                        value={summaryData.LENDO}
+                        unit={summaryData.LENDO === 1 ? "livro" : "livros"}
+                    />
+                    <SummaryCard
+                        title="Quero Ler"
+                        value={summaryData.QUERO_LER}
+                        unit={summaryData.LENDO === 1 ? "livro" : "livros"}
+                    />
                 </div>
 
                 {/* Seção da Estante */}
@@ -173,13 +198,12 @@ export default function BookshelfPage() {
                     </div>
                 )}
 
-            </div> {/* Fim do container flex-grow do conteúdo */}
+            </div>
 
-            {/* Footer: Mantém mt-auto */}
             <footer className="text-center text-xs text-gray-500 py-3 border-t border-gray-300 w-full mt-auto bg-[#4d3859]">
                 © {new Date().getFullYear()} Carol Gonzaga
             </footer>
 
-        </div> // Fim do container da PÁGINA (agora flex flex-col h-full)
+        </div>
     );
 }

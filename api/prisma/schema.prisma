@@ -27,6 +27,7 @@ model Book {
   coverUrl    String?
   description String?
   createdAt   DateTime @default(now())
+  pageCount   Int?
 
   // Relacionamento: Um livro pode estar em várias estantes
   bookshelves Bookshelf[]
