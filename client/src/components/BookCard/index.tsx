@@ -1,45 +1,35 @@
-// client/src/components/BookCard/index.tsx
+// /client/src/components/BookCard/index.tsx
 import Image from 'next/image';
 
 interface BookCardProps {
     title: string;
     author: string;
     coverUrl: string | null;
-    onAdd?: () => void;
-    isAdding?: boolean;
-    isAdded?: boolean;
 }
 
-export default function BookCard({ title, author, coverUrl, onAdd, isAdding, isAdded }: BookCardProps) {
+export default function BookCard({ title, author, coverUrl }: BookCardProps) {
     return (
-        <div className="group relative flex flex-col rounded-lg overflow-hidden shadow-lg bg-[#433A5E] transition-transform duration-300 hover:scale-105">
-            {onAdd && (
-                <button
-                    onClick={onAdd}
-                    disabled={isAdding || isAdded}
-                    className="absolute top-2 right-2 z-10 w-8 h-8 bg-black/50 rounded-full flex items-center justify-center text-white hover:bg-[#E85972] disabled:bg-green-500 disabled:cursor-not-allowed transition-colors"
-                    aria-label="Adicionar à estante"
-                >
-                    {isAdded ? '✓' : isAdding ? '...' : '+'}
-                </button>
-            )}
-
-            {coverUrl ? (
-                <Image
-                    src={coverUrl}
-                    alt={`Capa do livro ${title}`}
-                    width={200}
-                    height={300}
-                    className="w-full h-auto object-cover aspect-[2/3]"
-                />
-            ) : (
-                <div className="flex items-center justify-center w-full h-auto aspect-[2/3] bg-[#2A233C]">
-                    <span className="text-center text-sm text-gray-300 p-2">{title}</span>
-                </div>
-            )}
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
-                <h3 className="font-bold text-white truncate">{title}</h3>
-                <p className="text-sm text-gray-300 truncate">{author}</p>
+        // Adicionar w-36 para largura fixa, manter h-52
+        <div className="group relative flex flex-col rounded-lg overflow-hidden shadow-md bg-white w-36 h-52 transition-transform duration-300 hover:shadow-xl mx-auto"> {/* Adicionado mx-auto se necessário centralizar no grid */}
+            <div className="relative w-full h-full"> {/* Container relativo para a imagem */}
+                {coverUrl ? (
+                    <Image
+                        src={coverUrl}
+                        alt={`Capa do livro ${title}`}
+                        fill
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                        className="object-cover" // object-cover garante preenchimento sem distorção
+                    />
+                ) : (
+                    <div className="flex items-center justify-center w-full h-full bg-gray-200">
+                        <span className="text-center text-xs text-gray-500 p-2">{title}</span> {/* Reduzir tamanho do placeholder */}
+                    </div>
+                )}
+            </div>
+            {/* Overlay com gradiente e texto */}
+            <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 via-black/60 to-transparent"> {/* Reduzir padding */}
+                <h3 className="font-semibold text-white text-xs truncate">{title}</h3> {/* Ajustar tamanho e peso */}
+                <p className="text-xs text-gray-300 truncate">{author}</p>
             </div>
         </div>
     );

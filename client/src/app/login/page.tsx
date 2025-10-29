@@ -39,8 +39,8 @@ export default function AuthPage() {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setError(null);
-        setLoading(true); // Ativa o overlay
-        const startTime = Date.now(); // Marca o tempo inicial
+        setLoading(true);
+        const startTime = Date.now();
 
         const isLogin = tab === 'login';
         const endpoint = isLogin
@@ -55,20 +55,17 @@ export default function AuthPage() {
         try {
             apiResponse = await axios.post(endpoint, dataToSend);
         } catch (err) {
-            apiError = err as AxiosError<{ error: string }>; // Guarda o erro
+            apiError = err as AxiosError<{ error: string }>;
         }
 
-        // Calcula quanto tempo passou e quanto falta para 2 segundos
         const elapsedTime = Date.now() - startTime;
-        const minimumWaitTime = 2000; // 2 segundos
+        const minimumWaitTime = 2000;
         const remainingTime = minimumWaitTime - elapsedTime;
 
-        // Espera o tempo restante, se necessário
         if (remainingTime > 0) {
             await new Promise(resolve => setTimeout(resolve, remainingTime));
         }
 
-        // Agora, processa o resultado da API (depois de esperar)
         if (apiError) {
             const axiosError = apiError as AxiosError<{ error: string }>;
             setError(axiosError.response?.data?.error || `Erro ao ${isLogin ? 'fazer login' : 'criar conta'}.`);
@@ -82,7 +79,6 @@ export default function AuthPage() {
                     } else {
                         localStorage.removeItem("rememberEmail");
                     }
-                    // A navegação acontece após o loading ter durado pelo menos 2s
                     router.push('/bookshelf');
                 } else {
                     setError("Erro ao autenticar. Token não retornado.");
@@ -93,9 +89,7 @@ export default function AuthPage() {
             }
         }
 
-        // Finalmente, desativa o overlay (pode manter o pequeno delay para fade-out se desejar)
-        // O overlay já ficou visível por pelo menos 2 segundos.
-        setTimeout(() => setLoading(false), 300); // Delay para animação de fade-out
+        setTimeout(() => setLoading(false), 300);
 
     };
 
