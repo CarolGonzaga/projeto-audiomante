@@ -123,10 +123,10 @@ export default function BookshelfPage() {
 
     return (
         // Container da PÁGINA: Força altura total (h-full) do espaço disponível no <main>
-        <div className="flex flex-col flex-grow bg-[#e1d9d0] text-[#1E192B]">
+        <div className="flex flex-col flex-grow bg-[#e1d9d0] text-[#1E192B] overflow-hidden h-full">
 
             {/* Container do CONTEÚDO PRINCIPAL: Mantém flex-grow */}
-            <div className="container mx-auto p-4 md:p-8 flex-grow">
+            <div className="container mx-auto p-4 md:p-6 flex-grow overflow-auto">
 
                 {/* Seção de Sumário */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8 md:mb-12">
@@ -176,7 +176,7 @@ export default function BookshelfPage() {
             </div> {/* Fim do container flex-grow do conteúdo */}
 
             {/* Footer: Mantém mt-auto */}
-            <footer className="text-center text-xs text-gray-500 py-4 border-t border-gray-300 w-full mt-auto">
+            <footer className="text-center text-xs text-gray-500 py-3 border-t border-gray-300 w-full mt-auto bg-[#4d3859]">
                 © {new Date().getFullYear()} Carol Gonzaga
             </footer>
 

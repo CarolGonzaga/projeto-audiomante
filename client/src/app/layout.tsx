@@ -23,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="pt-br">
       <body className={`${inter.variable} ${cinzel.variable} font-sans`}>
         <AuthProvider>
           <Layout>{children}</Layout>

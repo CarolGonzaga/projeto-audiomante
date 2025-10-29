@@ -16,7 +16,7 @@ export default function Layout({ children }: LayoutProps) {
         pathname === "/login" || pathname === "/signup" || pathname === "/";
 
     return (
-        <div className="min-h-screen flex flex-col bg-[#4d3859]">
+        <div className="flex flex-col flex-grow min-h-screen bg-[#4d3859] overflow-hidden">
             {!isPublicRoute && <Navbar />}
             <main className="flex-grow">{children}</main>
         </div>
