@@ -1,4 +1,3 @@
-// /client/src/app/search/page.tsx
 "use client";
 
 import { useState, useEffect, Suspense } from 'react';
@@ -19,15 +18,19 @@ function SearchContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [results, setResults] = useState<BookSearchResult[]>([]);
-    const [loading, setLoading] = useState(true); // Começa carregando
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [currentSearchTerm, setCurrentSearchTerm] = useState<string | null>(null); // Pode ser null inicialmente
-    const [isShowingSuggestions, setIsShowingSuggestions] = useState(false); // Novo estado
+    const [currentSearchTerm, setCurrentSearchTerm] = useState<string | null>(null);
+    const [isShowingSuggestions, setIsShowingSuggestions] = useState(false);
 
     const [addingBooks, setAddingBooks] = useState<Set<string>>(new Set());
     const [addedBooks, setAddedBooks] = useState<Set<string>>(new Set());
 
-    useEffect(() => { /* ... verificação auth ... */ }, [isAuthenticated, authLoading, router]);
+    useEffect(() => {
+        if (!authLoading && !isAuthenticated) {
+            router.push('/login');
+        }
+    }, [isAuthenticated, authLoading, router]);
 
     useEffect(() => {
         const urlQuery = searchParams.get('q');
@@ -83,7 +86,28 @@ function SearchContent() {
         }
     };
 
-    const handleAddBook = async (book: BookSearchResult) => { /* ... */ };
+    const handleAddBook = async (book: BookSearchResult) => {
+        setAddingBooks(prev => new Set(prev).add(book.googleId));
+        try {
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/bookshelves`, {
+                ...book,
+                status: 'QUERO_LER',
+            });
+            setAddedBooks(prev => new Set(prev).add(book.googleId));
+        } catch (error) {
+            let errorMessage = "Erro ao adicionar o livro.";
+            if (isAxiosError(error) && error.response?.data?.error) {
+                errorMessage = error.response.data.error;
+            }
+            alert(errorMessage);
+        } finally {
+            setAddingBooks(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(book.googleId);
+                return newSet;
+            });
+        }
+    };
 
     if (authLoading) {
         return <LoadingOverlay isVisible={true} />;
@@ -94,7 +118,7 @@ function SearchContent() {
             <div className="container mx-auto p-4 md:p-8 flex-grow">
 
                 {/* Botão Voltar e Título Dinâmico */}
-                <div className="flex items-center gap-4 mb-6">
+                <div className="flex items-center gap-4 mb-20">
                     <Link href="/bookshelf" className="text-[#4f3d6b] hover:text-[#3e3055]" title="Voltar para Estante"> <FaArrowLeft size={20} /> </Link>
                     <h1 className="text-2xl font-bold text-[#4f3d6b]">
                         {isShowingSuggestions ? "Nossas Sugestões" : `Resultados para '${currentSearchTerm}'`}
@@ -107,7 +131,7 @@ function SearchContent() {
 
                 {/* Mensagem de nenhum resultado (só para buscas, não para sugestões) */}
                 {!isShowingSuggestions && results.length === 0 && !loading && currentSearchTerm && (
-                    <p className="text-gray-600 text-center py-10">Nenhum livro encontrado para '{currentSearchTerm}'.</p>
+                    <p className="text-gray-600 text-center py-10">Nenhum livro encontrado para &apos;{currentSearchTerm}&apos;.</p>
                 )}
 
                 {/* Grid de Livros (só mostra se não estiver loading) */}
