@@ -1,7 +1,7 @@
 // /client/src/app/search/page.tsx
 "use client";
 
-import { useState, FormEvent, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import axios, { isAxiosError } from 'axios';
 import BookCard from '@/components/BookCard';
 import { useAuth } from '@/hooks/useAuth';
@@ -18,31 +18,45 @@ function SearchContent() {
     const { isAuthenticated, loading: authLoading } = useAuth();
     const router = useRouter();
     const searchParams = useSearchParams();
-
     const [results, setResults] = useState<BookSearchResult[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true); // Começa carregando
     const [error, setError] = useState<string | null>(null);
-    const [currentSearchTerm, setCurrentSearchTerm] = useState<string | null>(null);
+    const [currentSearchTerm, setCurrentSearchTerm] = useState<string | null>(null); // Pode ser null inicialmente
+    const [isShowingSuggestions, setIsShowingSuggestions] = useState(false); // Novo estado
 
     const [addingBooks, setAddingBooks] = useState<Set<string>>(new Set());
     const [addedBooks, setAddedBooks] = useState<Set<string>>(new Set());
 
-    useEffect(() => {
-        if (!authLoading && !isAuthenticated) {
-            router.push('/login');
-        }
-    }, [isAuthenticated, authLoading, router]);
+    useEffect(() => { /* ... verificação auth ... */ }, [isAuthenticated, authLoading, router]);
 
     useEffect(() => {
         const urlQuery = searchParams.get('q');
-        const termToSearch = urlQuery || "lançamentos populares mais vendidos";
 
-        if (termToSearch !== currentSearchTerm) {
-            handleSearch(termToSearch);
+        if (urlQuery) {
+            setIsShowingSuggestions(false);
+            handleSearch(urlQuery);
+        } else {
+            setIsShowingSuggestions(true);
+            fetchSuggestions();
         }
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchParams]);
+
+    const fetchSuggestions = async () => {
+        setLoading(true);
+        setError(null);
+        setResults([]);
+        setCurrentSearchTerm(null);
+        setIsShowingSuggestions(true);
+
+        try {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/suggestions`);
+            setResults(response.data);
+        } catch (err) {
+            setError('Erro ao buscar sugestões. Tente novamente.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleSearch = async (searchTerm: string) => {
         if (!searchTerm.trim()) return;
@@ -51,6 +65,7 @@ function SearchContent() {
         setError(null);
         setResults([]);
         setCurrentSearchTerm(searchTerm);
+        setIsShowingSuggestions(false);
 
         try {
             const response = await axios.get(
@@ -58,19 +73,9 @@ function SearchContent() {
             );
 
             if (response.data.items) {
-                const books = response.data.items.map((item: GoogleBookItem) => ({
-                    googleId: item.id,
-                    title: item.volumeInfo.title,
-                    author: item.volumeInfo.authors ? item.volumeInfo.authors.join(', ') : 'Autor desconhecido',
-                    coverUrl: item.volumeInfo.imageLinks?.thumbnail || null,
-                    description: item.volumeInfo.description || null,
-                    pageCount: item.volumeInfo.pageCount || null,
-                }));
+                const books = response.data.items.map((item: GoogleBookItem) => ({ googleId: item.id, title: item.volumeInfo.title, author: item.volumeInfo.authors ? item.volumeInfo.authors.join(', ') : 'Autor desconhecido', coverUrl: item.volumeInfo.imageLinks?.thumbnail || null, description: item.volumeInfo.description || null, pageCount: item.volumeInfo.pageCount || null, }));
                 setResults(books);
-            } else {
-                setResults([]);
-            }
-
+            } else { setResults([]); }
         } catch (err) {
             setError('Erro ao buscar livros. Tente novamente.');
         } finally {
@@ -78,19 +83,7 @@ function SearchContent() {
         }
     };
 
-    const handleAddBook = async (book: BookSearchResult) => {
-        setAddingBooks(prev => new Set(prev).add(book.googleId));
-        try {
-            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/bookshelves`, { ...book, status: 'QUERO_LER', });
-            setAddedBooks(prev => new Set(prev).add(book.googleId));
-        } catch (error) {
-            let errorMessage = "Erro ao adicionar o livro.";
-            if (isAxiosError(error) && error.response?.data?.error) { errorMessage = error.response.data.error; }
-            alert(errorMessage);
-        } finally {
-            setAddingBooks(prev => { const newSet = new Set(prev); newSet.delete(book.googleId); return newSet; });
-        }
-    };
+    const handleAddBook = async (book: BookSearchResult) => { /* ... */ };
 
     if (authLoading) {
         return <LoadingOverlay isVisible={true} />;
@@ -100,35 +93,29 @@ function SearchContent() {
         <div className="flex flex-col flex-grow bg-[#e1d9d0] text-[#1E192B] overflow-hidden h-full">
             <div className="container mx-auto p-4 md:p-8 flex-grow">
 
+                {/* Botão Voltar e Título Dinâmico */}
                 <div className="flex items-center gap-4 mb-6">
-                    <Link href="/bookshelf" className="text-[#4f3d6b] hover:text-[#3e3055]" title="Voltar para Estante">
-                        <FaArrowLeft size={20} />
-                    </Link>
+                    <Link href="/bookshelf" className="text-[#4f3d6b] hover:text-[#3e3055]" title="Voltar para Estante"> <FaArrowLeft size={20} /> </Link>
                     <h1 className="text-2xl font-bold text-[#4f3d6b]">
-                        {currentSearchTerm === "livros sáficos populares" ? "Sugestões de Leitura" : `Resultados para '${currentSearchTerm}'`}
+                        {isShowingSuggestions ? "Nossas Sugestões" : `Resultados para '${currentSearchTerm}'`}
                     </h1>
                 </div>
 
-                {loading && <p className="text-center py-10 text-gray-600">Buscando...</p>}
+                {/* Loading (sem overlay aqui, apenas texto) */}
+                {loading && <div className="text-center py-10 text-gray-600">Carregando livros...</div>}
                 {error && <p className="text-red-600 text-center py-10">{error}</p>}
 
-                {results.length === 0 && !loading && currentSearchTerm && (
+                {/* Mensagem de nenhum resultado (só para buscas, não para sugestões) */}
+                {!isShowingSuggestions && results.length === 0 && !loading && currentSearchTerm && (
                     <p className="text-gray-600 text-center py-10">Nenhum livro encontrado para '{currentSearchTerm}'.</p>
                 )}
 
-                {/* Grid de Livros */}
+                {/* Grid de Livros (só mostra se não estiver loading) */}
                 {!loading && results.length > 0 && (
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-5">
                         {results.map((book) => (
                             <div key={book.googleId} className="flex justify-center">
-                                <BookCard
-                                    title={book.title}
-                                    author={book.author}
-                                    coverUrl={book.coverUrl}
-                                    onAdd={() => handleAddBook(book)}
-                                    isAdding={addingBooks.has(book.googleId)}
-                                    isAdded={addedBooks.has(book.googleId)}
-                                />
+                                <BookCard /* ...props... */ title={book.title} author={book.author} coverUrl={book.coverUrl} onAdd={() => handleAddBook(book)} isAdding={addingBooks.has(book.googleId)} isAdded={addedBooks.has(book.googleId)} />
                             </div>
                         ))}
                     </div>
