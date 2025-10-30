@@ -18,8 +18,12 @@ router.get(
         const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
             expiresIn: "7d",
         });
-        // Redireciona o usuário de volta para o front-end com o token na URL
-        res.redirect(`http://localhost:3000/auth/callback?token=${token}`);
+
+        // Define a URL do cliente a partir de uma variável de ambiente
+        const clientUrl = process.env.CLIENT_URL || "http://localhost:3000";
+
+        // Redireciona para a URL correta
+        res.redirect(`${clientUrl}/auth/callback?token=${token}`);
     }
 );
 

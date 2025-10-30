@@ -132,7 +132,7 @@ export default function BookshelfPage() {
     }
 
     return (
-        <div className="flex flex-col flex-grow bg-[#e1d9d0] text-[#1E192B] overflow-hidden h-full">
+        <div className="flex flex-col flex-grow bg-[#e1d9d0] text-[#1E192B] h-full">
 
             {/* Container do CONTEÚDO PRINCIPAL */}
             <div className="container mx-auto p-4 md:p-6 flex-grow overflow-auto">

@@ -1,0 +1,26 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "api/src/index.ts",
+            "use": "@vercel/node",
+            "config": {
+                "includeFiles": ["../prisma/**"]
+            }
+        },
+        {
+            "src": "client/next.config.ts",
+            "use": "@vercel/next"
+        }
+    ],
+    "rewrites": [
+        {
+            "source": "/api/(.*)",
+            "destination": "/api/src/index.ts"
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/client/$1"
+        }
+    ]
+}

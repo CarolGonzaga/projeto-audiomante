@@ -217,17 +217,17 @@ export default function BookDetailPage() {
         // Container da PÁGINA: flex-col, flex-grow, fundo bege
         <div className="flex flex-col flex-grow bg-[#e1d9d0] text-[#1E192B] h-full">
             {/* Container do CONTEÚDO */}
-            <div className="container mx-auto p-4 md:p-8 flex-grow">
+            <div className="container mx-auto p-4 md:p-8 flex-grow flex flex-col mb-10">
 
                 {/* Botão Voltar */}
-                <div className="mb-20">
+                <div className="mb-10">
                     <Link href="/bookshelf" className="text-[#4f3d6b] hover:text-[#3e3055] inline-flex items-center gap-2 text-sm">
                         <FaArrowLeft /> Voltar para Estante
                     </Link>
                 </div>
 
                 {/* Grid Principal (1 coluna mobile, 3 desktop) */}
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-6 md:gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-6 md:gap-8 flex-grow min-h-0">
 
                     {/* Coluna Esquerda (Imagem e Status) */}
                     <div className="md:col-span-1 flex flex-col items-center">
@@ -268,7 +268,7 @@ export default function BookDetailPage() {
                     </div>
 
                     {/* Coluna Direita (Detalhes e Ações) */}
-                    <div className="md:col-span-4 bg-white/50 p-6 rounded-lg shadow-md"> {/* Card com fundo leve */}
+                    <div className="md:col-span-4 bg-white/50 p-6 rounded-lg shadow-md overflow-y-auto">
                         <h1 className="text-1xl lg:text-2xl font-bold text-[#4f3d6b] mb-1">{entry.book.title}</h1>
                         <p className="text-md text-gray-700 mb-4">{entry.book.author}</p>
 

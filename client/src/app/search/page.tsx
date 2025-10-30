@@ -114,13 +114,13 @@ function SearchContent() {
     }
 
     return (
-        <div className="flex flex-col flex-grow bg-[#e1d9d0] text-[#1E192B] overflow-hidden h-full">
+        <div className="flex flex-col flex-grow bg-[#e1d9d0] text-[#1E192B] h-full">
             <div className="container mx-auto p-4 md:p-8 flex-grow">
 
                 {/* Botão Voltar e Título Dinâmico */}
-                <div className="flex items-center gap-4 mb-20">
+                <div className="flex items-center gap-4 my-6">
                     <Link href="/bookshelf" className="text-[#4f3d6b] hover:text-[#3e3055]" title="Voltar para Estante"> <FaArrowLeft size={20} /> </Link>
-                    <h1 className="text-2xl font-bold text-[#4f3d6b]">
+                    <h1 className="text-lg font-bold text-[#4f3d6b]">
                         {isShowingSuggestions ? "Nossas Sugestões" : `Resultados para '${currentSearchTerm}'`}
                     </h1>
                 </div>
