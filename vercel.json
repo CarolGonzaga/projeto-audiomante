@@ -17,6 +17,10 @@
         {
             "source": "/api/(.*)",
             "destination": "/api/src/index.ts"
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/client/$1"
         }
     ]
 }
