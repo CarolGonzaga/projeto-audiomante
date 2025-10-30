@@ -1,3 +1,5 @@
+// /client/src/app/bookshelf/[id]/page.tsx
+
 "use client";
 
 import { useEffect, useState, FormEvent, useMemo } from 'react';
@@ -10,31 +12,30 @@ import Link from 'next/link';
 import { FaArrowLeft, FaEdit, FaTrash, FaChevronDown } from 'react-icons/fa';
 import LoadingOverlay from '@/components/LoadingOverlay';
 
-// Interfaces (mantidas)
+// ... [Interfaces e Componente EditModal permanecem os mesmos] ...
 interface Book {
     title: string;
     author: string;
     coverUrl: string | null;
     description: string | null;
-    pageCount?: number | null; // Adicionar pageCount
-    publishedDate?: string | null; // Adicionar publishedDate
+    pageCount?: number | null;
+    publishedDate?: string | null;
 }
 interface BookshelfEntry {
-    id: string; // Adicionar id da entrada da estante
+    id: string;
     status: string;
     rating: number | null;
     review: string | null;
     book: Book;
 }
-
-// Componente para Modal de Edição (opcional, para separar a lógica)
 const EditModal = ({ entryId, initialRating, initialReview, onClose, onSave }: {
     entryId: string;
     initialRating: number | null;
     initialReview: string | null;
     onClose: () => void;
-    onSave: (updatedEntry: Partial<BookshelfEntry>) => void; // Callback para atualizar estado local
+    onSave: (updatedEntry: Partial<BookshelfEntry>) => void;
 }) => {
+    // ... [Código do EditModal não muda] ...
     const [rating, setRating] = useState<number | ''>(initialRating ?? '');
     const [review, setReview] = useState(initialReview ?? '');
     const [isSaving, setIsSaving] = useState(false);
@@ -48,8 +49,8 @@ const EditModal = ({ entryId, initialRating, initialReview, onClose, onSave }: {
                 review: review,
             };
             await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/bookshelves/${entryId}`, updatedData);
-            onSave(updatedData); // Atualiza estado na página pai
-            onClose(); // Fecha o modal
+            onSave(updatedData);
+            onClose();
         } catch (error) {
             console.error("Erro ao atualizar a estante:", error);
             alert("Não foi possível salvar as alterações.");
@@ -109,16 +110,16 @@ const EditModal = ({ entryId, initialRating, initialReview, onClose, onSave }: {
 
 
 export default function BookDetailPage() {
+    // ... [Hooks e funções não mudam] ...
     const params = useParams();
     const router = useRouter();
-    const { id } = params; // Este é o ID da *entrada* na Bookshelf
+    const { id } = params;
     const { isAuthenticated, loading: authLoading } = useAuth();
     const [entry, setEntry] = useState<BookshelfEntry | null>(null);
     const [loading, setLoading] = useState(true);
     const [isEditingModalOpen, setIsEditingModalOpen] = useState(false);
-
-    // Estado local para o status, atualizado imediatamente
     const [currentStatus, setCurrentStatus] = useState('');
+    const [activeTab, setActiveTab] = useState<'sobre' | 'avaliacao'>('sobre');
 
     useEffect(() => {
         if (authLoading) return;
@@ -128,47 +129,41 @@ export default function BookDetailPage() {
         }
 
         const fetchBookDetails = async () => {
-            setLoading(true); // Garante loading ao buscar
+            setLoading(true);
             try {
                 const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/bookshelves/${id}`);
                 setEntry(response.data);
-                setCurrentStatus(response.data.status); // Define o status inicial
+                setCurrentStatus(response.data.status);
             } catch (error) {
                 console.error("Erro ao buscar detalhes do livro:", error);
-                setEntry(null); // Define como nulo em caso de erro
+                setEntry(null);
             } finally {
                 setLoading(false);
             }
         };
 
-        if (id && isAuthenticated) { // Verifica isAuthenticated antes de buscar
+        if (id && isAuthenticated) {
             fetchBookDetails();
         } else if (!authLoading && !isAuthenticated) {
-            router.push('/login'); // Redireciona se não autenticado após loading
+            router.push('/login');
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id, isAuthenticated, authLoading]); // Remover router daqui para evitar loop
+    }, [id, isAuthenticated, authLoading, router]);
 
-    // Função para atualizar o status via API
     const handleStatusChange = async (newStatus: string) => {
         if (!entry || newStatus === currentStatus) return;
-
-        setCurrentStatus(newStatus); // Atualiza otimisticamente a UI
-
+        setCurrentStatus(newStatus);
         try {
             await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/bookshelves/${entry.id}`, {
                 status: newStatus,
             });
-            // Atualiza o estado principal se quiser (opcional, já que currentStatus controla a UI)
             setEntry(prev => prev ? { ...prev, status: newStatus } : null);
         } catch (error) {
             console.error("Erro ao atualizar status:", error);
             alert("Não foi possível atualizar o status.");
-            setCurrentStatus(entry.status); // Reverte a UI em caso de erro
+            setCurrentStatus(entry.status);
         }
     };
 
-    // Função para deletar
     const handleDelete = async () => {
         if (!entry || !window.confirm("Tem certeza que deseja remover este livro da sua estante?")) {
             return;
@@ -183,12 +178,10 @@ export default function BookDetailPage() {
         }
     };
 
-    // Função chamada pelo Modal para atualizar o estado local
     const handleSaveEdit = (updatedData: Partial<BookshelfEntry>) => {
         setEntry(prev => prev ? { ...prev, ...updatedData } : null);
     };
 
-    // Extrai o ano da data de publicação
     const publicationYear = useMemo(() => {
         if (entry?.book?.publishedDate) {
             return new Date(entry.book.publishedDate).getFullYear();
@@ -198,7 +191,7 @@ export default function BookDetailPage() {
 
     // --- Estados de Carregamento e Erro ---
     if (loading || authLoading) {
-        return <LoadingOverlay isVisible={true} />; // Usa o overlay aqui
+        return <LoadingOverlay isVisible={true} />;
     }
 
     if (!entry) {
@@ -214,10 +207,8 @@ export default function BookDetailPage() {
 
     // --- Renderização Principal ---
     return (
-        // Container da PÁGINA: flex-col, flex-grow, fundo bege
-        <div className="flex flex-col flex-grow bg-[#e1d9d0] text-[#1E192B] h-full">
-            {/* Container do CONTEÚDO */}
-            <div className="container mx-auto p-4 md:p-8 flex-grow flex flex-col mb-10">
+        <div className="flex flex-col bg-[#e1d9d0] text-[#1E192B] md:h-full">
+            <div className="container mx-auto p-4 md:p-8 flex-grow flex flex-col md:h-full md:min-h-0">
 
                 {/* Botão Voltar */}
                 <div className="mb-10">
@@ -226,18 +217,18 @@ export default function BookDetailPage() {
                     </Link>
                 </div>
 
-                {/* Grid Principal (1 coluna mobile, 3 desktop) */}
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-6 md:gap-8 flex-grow min-h-0">
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-6 md:gap-8 md:flex-grow md:min-h-0">
 
                     {/* Coluna Esquerda (Imagem e Status) */}
                     <div className="md:col-span-1 flex flex-col items-center">
+                        {/* ... (código da imagem e status seletor) ... */}
                         <div className="w-full max-w-52 aspect-[2/3] relative rounded-lg shadow-lg overflow-hidden mb-6">
                             {entry.book.coverUrl ? (
                                 <Image
                                     src={entry.book.coverUrl}
                                     alt={`Capa de ${entry.book.title}`}
                                     fill
-                                    sizes="(max-width: 768px) 80vw, 208px" // Ajustado
+                                    sizes="(max-width: 768px) 80vw, 208px"
                                     className="object-cover"
                                     priority
                                 />
@@ -245,8 +236,6 @@ export default function BookDetailPage() {
                                 <div className="bg-gray-300 h-full flex items-center justify-center text-gray-500">Capa indisponível</div>
                             )}
                         </div>
-
-                        {/* Seletor de Status */}
                         <div className="w-full max-w-52">
                             <label htmlFor="statusSelect" className="block text-sm font-medium text-gray-700 mb-1">Status:</label>
                             <div className="relative">
@@ -268,46 +257,94 @@ export default function BookDetailPage() {
                     </div>
 
                     {/* Coluna Direita (Detalhes e Ações) */}
-                    <div className="md:col-span-4 bg-white/50 p-6 rounded-lg shadow-md overflow-y-auto">
-                        <h1 className="text-1xl lg:text-2xl font-bold text-[#4f3d6b] mb-1">{entry.book.title}</h1>
-                        <p className="text-md text-gray-700 mb-4">{entry.book.author}</p>
+                    {/* MUDANÇA 1: Adicionado 'text-center' (mobile) e 'md:text-left' (desktop) 
+                    */}
+                    <div className="md:col-span-4 bg-white/50 p-6 rounded-lg shadow-md flex flex-col md:min-h-0 text-center md:text-left">
 
-                        {/* Detalhes Adicionais */}
-                        <div className="text-sm text-gray-600 space-y-1 mb-4">
-                            {entry.book.pageCount && <span> • {entry.book.pageCount} páginas</span>}
-                            {publicationYear !== 'N/A' && <span> • Publicado em {publicationYear}</span>}
+                        {/* --- 1. CABEÇALHO (FIXO) --- */}
+                        <div>
+                            <h1 className="text-1xl lg:text-2xl font-bold text-[#4f3d6b] mb-1">{entry.book.title}</h1>
+                            <p className="text-md text-gray-700 mb-4">{entry.book.author}</p>
+
+                            {/* MUDANÇA 2: Centralizar os 'badges' no mobile */}
+                            <div className="flex flex-wrap justify-center md:justify-start gap-x-4 gap-y-1 text-sm text-gray-600 mb-4">
+                                {entry.book.pageCount &&
+                                    <span className="bg-[#e1d9d0] px-2 py-0.5 rounded-full">
+                                        {entry.book.pageCount} páginas
+                                    </span>}
+                                {publicationYear !== 'N/A' &&
+                                    <span className="bg-[#e1d9d0] px-2 py-0.5 rounded-full">
+                                        Publicado em {publicationYear}
+                                    </span>}
+                            </div>
+
+                            {/* --- ABAS DE NAVEGAÇÃO --- */}
+                            <div className="border-b border-gray-300 mb-4">
+                                {/* MUDANÇA 3: Centralizar as abas no mobile */}
+                                <nav className="-mb-px flex justify-center md:justify-start gap-4">
+                                    <button
+                                        onClick={() => setActiveTab('sobre')}
+                                        className={`py-2 px-1 border-b-2 font-semibold ${activeTab === 'sobre'
+                                                ? 'border-[#4f3d6b] text-[#4f3d6b]'
+                                                : 'border-transparent text-gray-500 hover:text-[#4f3d6b] hover:border-gray-400'
+                                            }`}
+                                    >
+                                        Sobre o Livro
+                                    </button>
+                                    <button
+                                        onClick={() => setActiveTab('avaliacao')}
+                                        className={`py-2 px-1 border-b-2 font-semibold ${activeTab === 'avaliacao'
+                                                ? 'border-[#4f3d6b] text-[#4f3d6b]'
+                                                : 'border-transparent text-gray-500 hover:text-[#4f3d6b] hover:border-gray-400'
+                                            }`}
+                                    >
+                                        Sua Avaliação
+                                    </button>
+                                </nav>
+                            </div>
+                        </div> {/* Fim do Cabeçalho Fixo */}
+
+
+                        {/* --- 2. CONTEÚDO (COM ROLAGEM) --- */}
+                        {/* (O 'text-center md:text-left' do pai vai cuidar do alinhamento do texto aqui) */}
+                        <div className="md:flex-grow md:overflow-y-auto pr-2">
+                            <div className={activeTab === 'sobre' ? 'block' : 'hidden'}>
+                                <div
+                                    className="text-gray-700 leading-relaxed text-sm space-y-4"
+                                    dangerouslySetInnerHTML={{ __html: entry.book.description || "Nenhuma descrição disponível." }}
+                                />
+                            </div>
+                            <div className={activeTab === 'avaliacao' ? 'block' : 'hidden'}>
+                                {entry.rating !== null && <p className="text-sm font-bold">Nota: {entry.rating} / 5</p>}
+                                <p className={`mt-2 text-gray-700 text-sm ${!entry.review && 'italic'}`}>
+                                    {entry.review || "Nenhuma resenha adicionada."}
+                                </p>
+                            </div>
+                        </div> {/* Fim do Conteúdo com Rolagem */}
+
+
+                        {/* --- 3. FOOTER DO CARD (FIXO) --- */}
+                        {/* MUDANÇA 4: Centralizar o botão no mobile */}
+                        <div className="mt-8 md:mt-auto pt-4 border-t border-gray-300 flex justify-center md:justify-start">
+                            {activeTab === 'sobre' && (
+                                <button
+                                    onClick={handleDelete}
+                                    className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md font-semibold text-sm"
+                                >
+                                    <FaTrash /> Remover da Estante
+                                </button>
+                            )}
+                            {activeTab === 'avaliacao' && (
+                                <button
+                                    onClick={() => setIsEditingModalOpen(true)}
+                                    className="flex items-center gap-2 px-4 py-2 bg-[#6b537d] hover:bg-[#4f3d6b] text-white rounded-md font-semibold text-sm"
+                                >
+                                    <FaEdit /> Editar Resenha/Nota
+                                </button>
+                            )}
                         </div>
 
-                        {/* Descrição */}
-                        <h2 className="text-md font-semibold text-[#4f3d6b] mt-6 mb-2">Resumo</h2>
-                        <div
-                            className="text-gray-700 leading-relaxed text-sm space-y-4"
-                            dangerouslySetInnerHTML={{ __html: entry.book.description || "Nenhuma descrição disponível." }}
-                        />
-
-                        {/* Resenha e Nota */}
-                        <h2 className="text-md font-semibold text-[#4f3d6b] mt-6 mb-2">Sua Avaliação</h2>
-                        {entry.rating !== null && <p className="text-sm font-bold">Nota: {entry.rating} / 5</p>}
-                        <p className={`mt-2 text-gray-700 text-sm ${!entry.review && 'italic'}`}>
-                            {entry.review || "Nenhuma resenha adicionada."}
-                        </p>
-
-                        {/* Botões de Ação */}
-                        <div className="mt-8 flex flex-wrap gap-4">
-                            <button
-                                onClick={() => setIsEditingModalOpen(true)}
-                                className="flex items-center gap-2 px-4 py-2 bg-[#6b537d] hover:bg-[#4f3d6b] text-white rounded-md font-semibold text-sm"
-                            >
-                                <FaEdit /> Editar Resenha/Nota
-                            </button>
-                            <button
-                                onClick={handleDelete}
-                                className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md font-semibold text-sm"
-                            >
-                                <FaTrash /> Remover da Estante
-                            </button>
-                        </div>
-                    </div>
+                    </div> {/* Fim da Coluna Direita */}
                 </div>
             </div>
 
