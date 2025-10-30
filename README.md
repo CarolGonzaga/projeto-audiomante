@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="client/public/Audiomante.svg" alt="Logo Audiomante" width="200"/>
+  <img src=".github/logo-carol-gonzaga.svg" alt="Logo Carol Gonzaga" width="200"/>
 </p>
 
 </br>
@@ -9,7 +9,7 @@
 <p align="center">
   <a href="#-tecnologias">Tecnologias</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
   <a href="#-objetivo">Objetivo</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-  <a href="#-funcionalidades">Funcionalidades</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="#️-funcionalidades">Funcionalidades</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
   <a href="https://projeto-audiomante.vercel.app" target="_blank">Acesse o Projeto</a>
 </p>
 
@@ -17,7 +17,7 @@
 </br>
 
 <p align="center">
-  <img src=".github/preview.png" alt="Preview do Projeto Audiomante" width="600"/>
+  <img src=".github/preview.jpg" alt="Preview do Projeto Audiomante" width="600"/>
 </p>
 
 </br>
