@@ -17,11 +17,11 @@ const port = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-app.use("/users", userRoutes);
-app.use("/bookshelves", bookshelfRoutes);
-app.use("/search", searchRoutes);
-app.use("/auth", authRoutes);
-app.use("/suggestions", suggestionsRoutes); // <-- 2. Usar a rota
+app.use(["/users", "/api/users"], userRoutes);
+app.use(["/bookshelves", "/api/bookshelves"], bookshelfRoutes);
+app.use(["/search", "/api/search"], searchRoutes);
+app.use(["/auth", "/api/auth"], authRoutes);
+app.use(["/suggestions", "/api/suggestions"], suggestionsRoutes);
 
 app.get("/", (req, res) => {
     /* ... */
