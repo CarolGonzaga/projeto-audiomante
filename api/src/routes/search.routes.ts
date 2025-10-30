@@ -4,7 +4,7 @@ import axios from "axios";
 const router = Router();
 
 router.get("/", async (req: Request, res) => {
-    const { q } = req.query; // Pega o termo de busca, ex: q=evelyn+hugo
+    const { q } = req.query;
 
     if (!q) {
         return res

@@ -18,7 +18,7 @@ interface Book {
 
 interface BookshelfEntry {
     id: string;
-    status: string; // 'LIDO', 'LENDO', 'QUERO_LER'
+    status: string;
     book: Book;
 }
 

@@ -9,8 +9,15 @@ const router = Router();
 router.post("/", authMiddleware, async (req: Request, res) => {
     try {
         const userId = req.userId!;
-        const { googleId, title, author, coverUrl, description, status } =
-            req.body;
+        const {
+            googleId,
+            title,
+            author,
+            coverUrl,
+            description,
+            status,
+            pageCount,
+        } = req.body;
 
         if (!googleId || !title || !author || !status) {
             return res
@@ -27,6 +34,7 @@ router.post("/", authMiddleware, async (req: Request, res) => {
                 author,
                 coverUrl,
                 description,
+                pageCount: pageCount ?? 0,
             },
         });
 
@@ -158,7 +166,7 @@ router.delete("/:id", authMiddleware, async (req: Request, res) => {
             });
         }
 
-        res.status(204).send(); // 204 No Content é a resposta padrão para um delete bem-sucedido
+        res.status(204).send();
     } catch (error) {
         console.error(error);
         res.status(500).json({
