@@ -9,7 +9,7 @@
             }
         },
         {
-            "src": "client/next.config.ts",
+            "src": "client/package.json",
             "use": "@vercel/next"
         }
     ],
