@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
+import LoadingOverlay from '@/components/LoadingOverlay';
 
-export default function AuthCallbackPage() {
+function CallbackContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const { login } = useAuth();
@@ -19,9 +20,13 @@ export default function AuthCallbackPage() {
         }
     }, [searchParams, router, login]);
 
+    return <LoadingOverlay isVisible={true} />;
+}
+
+export default function AuthCallbackPage() {
     return (
-        <div className="flex min-h-screen items-center justify-center">
-            <p>Autenticando...</p>
-        </div>
+        <Suspense fallback={<LoadingOverlay isVisible={true} />}>
+            <CallbackContent />
+        </Suspense>
     );
 }

@@ -5,7 +5,7 @@ import axios, { isAxiosError } from 'axios';
 import BookCard from '@/components/BookCard';
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { FaPlus, FaCheck, FaSpinner, FaArrowLeft } from 'react-icons/fa';
+import { FaArrowLeft } from 'react-icons/fa';
 import Link from 'next/link';
 import LoadingOverlay from '@/components/LoadingOverlay';
 
