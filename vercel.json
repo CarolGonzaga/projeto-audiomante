@@ -10,10 +10,7 @@
         },
         {
             "src": "client/package.json",
-            "use": "@vercel/next",
-            "config": {
-                "workDirectory": "client"
-            }
+            "use": "@vercel/next"
         }
     ],
     "rewrites": [
@@ -23,7 +20,7 @@
         },
         {
             "source": "/(.*)",
-            "destination": "/$1"
+            "destination": "/client"
         }
     ]
 }
