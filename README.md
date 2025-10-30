@@ -4,7 +4,7 @@
 
 </br>
 
-<p align="center">Uma plataforma full-stack para catalogar e resenhar livros sáficos, permitindo que usuários criem sua estante virtual personalizada.</p>
+<p align="center">Uma plataforma full-stack para catalogar e resenhar livros, permitindo que usuários criem sua estante virtual personalizada.</p>
 
 <p align="center">
   <a href="#-tecnologias">Tecnologias</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
@@ -29,26 +29,26 @@ Esse projeto foi desenvolvido em um monorepo, separando o `client` (Front-end) e
 
 ### **Front-end (Client)**
 
--   **React (v19)** e **Next.js (v15)** com App Router
+-   **React** e **Next.js** com App Router
 -   **TypeScript**
--   **Tailwind CSS** (para estilização responsiva)
--   **React Context** (para gerenciamento de estado de autenticação)
--   **Axios** (para chamadas à API)
+-   **Tailwind CSS**
+-   **React Context**
+-   **Axios**
 
 ### **Back-end (API)**
 
 -   **Node.js** e **Express**
 -   **TypeScript**
--   **Prisma** (como ORM para gerenciamento do banco de dados)
+-   **Prisma**
 -   **PostgreSQL**
--   **JSON Web Tokens (JWT)** (para autenticação de API)
--   **Passport.js** (para autenticação via Google OAuth 2.0)
--   **Bcrypt.js** (para hashing de senhas)
+-   **JSON Web Tokens (JWT)**
+-   **Passport.js**
+-   **Bcrypt.js**
 
 ### **Infraestrutura e API Externa**
 
--   **Vercel** (para deploy do monorepo)
--   **Google Books API** (para busca de dados e capas dos livros)
+-   **Vercel**
+-   **Google Books API**
 
 </br>
 </br>
