@@ -10,17 +10,16 @@
         },
         {
             "src": "client/package.json",
-            "use": "@vercel/next"
+            "use": "@vercel/next",
+            "config": {
+                "workDirectory": "client"
+            }
         }
     ],
     "rewrites": [
         {
             "source": "/api/(.*)",
             "destination": "/api/src/index.ts"
-        },
-        {
-            "source": "/(.*)",
-            "destination": "/client/$1"
         }
     ]
 }
